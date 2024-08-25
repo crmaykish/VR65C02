@@ -1,0 +1,4 @@
+build/
+*.o
+6502_rom_bin.h
+.vscode/
