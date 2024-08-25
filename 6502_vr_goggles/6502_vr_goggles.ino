@@ -82,9 +82,9 @@ void loop() {
   }
 
   if (program_mode) {
-    Serial1.println("Program mode!");
+    Serial1.println("Debug mode!");
     while(1);
-    // TODO: load 6502 program code into "ROM"
+    // TODO: Implement debugger, single-step function, etc.
   }
   else {
 #ifdef SERIAL_DEBUG
@@ -103,13 +103,7 @@ void loop() {
       // 6502 is reading from memory
       DATA_BUS.DIR = 0xFF;
 
-      if (addr == 0xFFFC) {
-        DATA_BUS.OUT = ((0x10000 - ROM_SIZE) & 0xFF);
-      }
-      else if (addr == 0xFFFD) {
-        DATA_BUS.OUT = ((0x10000 - ROM_SIZE) & 0xFF00) >> 8;
-      }
-      else if (addr >= (0x10000 - ROM_SIZE)) {
+      if (addr >= (0x10000 - ROM_SIZE)) {
         // Read from "ROM"
         DATA_BUS.OUT = ROM[addr % ROM_SIZE];
       }
