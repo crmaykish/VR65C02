@@ -14,3 +14,9 @@ int write(int fd, const char *buf, unsigned count)
     return i;
 }
 #pragma warn(unused-param, pop)
+
+char uart_getc() {
+    while (PEEK(UART_RX_RDY) == 0) {
+    }
+    return PEEK(UART_RX); 
+}
