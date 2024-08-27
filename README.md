@@ -14,7 +14,7 @@ It's like the 65C02 is wearing the ATmega as a VR headset!
 - 4K each of emulated ROM and RAM
 - Memory-mapped serial port and GPIO register
 - 6502 is programmed by uploading an Arduino sketch
-- Eye-watering clock speed of 183kHz!
+- Eye-watering clock speed of 257kHz!
 
 ### Why?
 
@@ -72,10 +72,16 @@ The ATmega4809 is programmed via UPDI, specifically, I am using a standard FTDI 
 
 All of the limitations of this system come down to hitting the limits of the ATmega4809 itself in one way or another.
 
-The main drawback is obviously clock speed. Simulating the whole bus cycle and all of the potential memory and I/O operations of the 6502 on a 20 MHz 8-bit microcontroller is not exactly quick. Measuring the PHI2 output on the CPU with an oscilloscope shows that the effective clock speed is about 183 kHz. Even at this speed, VR65C02 is surprisingly usable for simple GPIO tasks or interacting over the serial port, but it's about 45x slower than a Commodore 64 or Apple II. There are undoubtedly optimizations to make in the Arduino code that could speed this up considerably, but even with perfect AVR assembly, I doubt this system could ever run in the MHz range.
+### Clock Speed
+
+The main drawback is obviously clock speed. Simulating the whole bus cycle and all of the potential memory and I/O operations of the 6502 on a 20 MHz 8-bit microcontroller is not exactly quick. Measuring the PHI2 output on the CPU with an oscilloscope shows that the effective clock speed is about 257 kHz. Even at this speed, VR65C02 is surprisingly usable for simple GPIO tasks or interacting over the serial port, but it's about 4x slower than a Commodore 64 or Apple II.
+
+Because not all the emulated peripherals respond at the same speed, the effective clock speed is actually somewhat variable depending on the I/O demands of the 6502 code. This doesn't fluctuate too dramatically, but heavy I/O, e.g. polling the serial port, will run at around 257 kHz, whereas no I/O at all will get the clock up to about 270 kHz.
+
+### Not Enough Pins
 
 Besides the slow speed, the other main limitations is the lack of available pins on the ATmega. All 31 available IO pins are being used to connect to the 65C02 bus and control signals. Two of the pins are used for the serial port and four are set up as GPIO. The GPIO pins could be used for other things, but there's not a huge number to spare.
 
 In theory, these GPIO pins could be repurposed as chip-select signals to attach some real I/O devices to the system. It wouldn't be a stretch to attach a real RAM chip and have the microcontroller copy the program code from Flash into that RAM. In that scenario, a real clock oscillator could be used and the Arduino would become a slow peripheral using the RDY pin to handle the higher clock rate.
 
-The ATmega4809 is also available in a 48 pin QFP package with quite a few more I/O pins. This might be fun to explore, but it would definitely detracts from the DIP aesthetic and make VR65C02 harder to build.
+The ATmega4809 is also available in a 48 pin QFP package with quite a few more I/O pins. This might be fun to explore, but it would definitely detract from the DIP aesthetic and make VR65C02 harder to build.

@@ -27,7 +27,7 @@
 
 // NOTE: ROM content is defined in the generted header file 6502_rom_bin.h
 
-// Byte array acts as system memory for the 6502
+// Byte array acts as system RAM for the 6502
 uint8_t RAM[RAM_SIZE] = {0};
 
 uint16_t addr = 0;
