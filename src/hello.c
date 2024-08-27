@@ -4,7 +4,7 @@
 int main() {
     // unsigned int a = 0;
 
-    printf("\r\nHello!\r\n Enter some letters: ");
+    printf("\r\nHello!\r\nEnter some letters: \r\n");
 
 
 

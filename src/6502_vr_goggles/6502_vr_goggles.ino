@@ -49,10 +49,10 @@ void setup() {
     digitalWriteFast(CLK, HIGH);
 
     // Setup "VIA" pins
-    VIA_PORT.DIRSET = 0b00111100;
+    VIA_PORT.DIRSET = 0b00001111;
     VIA_PORT.OUT = 0b00000000;
 
-    // TODO: alternate pin mapping for Serial 1 pins
+    Serial1.swap(1);
     Serial1.begin(115200);
 
     // Toggle the clock a few times with the reset pin LOW
@@ -103,7 +103,7 @@ void loop() {
     // PHI goes HIGH
     digitalWriteFast(CLK, HIGH);
     // NOTE: The 6502 does not seem to require a delay on the rising edge
-    // like it does on the falling edge of the clock
+    // of the clock like it does on the falling edge
 
     if (!rw) {
         // Read the data bus
@@ -117,9 +117,7 @@ void loop() {
             Serial1.write(data);
         } else if (addr == VIA_ADDR) {
             // Write data bus to "VIA"
-            VIA_PORT.OUT =
-                ((data & 0xF)
-                 << 2); // TODO: can remove the shift with alt uart pins
+            VIA_PORT.OUT = (data & 0xF);
         }
     }
 }
