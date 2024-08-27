@@ -36,4 +36,4 @@ build_dir:
 	@mkdir -p build
 
 clean:
-	@$(RM) -rf build src/*.o config/*.lib config/*.o build/*.map build/*.list
+	@$(RM) -rf build *.o *.lib 6502_vr_goggles/6502_rom_bin.h
