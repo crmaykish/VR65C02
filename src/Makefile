@@ -18,7 +18,7 @@ all: hello
 
 # Hello World
 hello: $(HELLO_SRC) | build_dir rom_lib
-	$(CC) $(CFLAGS) -C $(ROM_CFG) $(HELLO_SRC) $(ROM_LIB) -o build/hello.bin
+	$(CC) $(CFLAGS) -C $(ROM_CFG) $(HELLO_SRC) $(ROM_LIB) -o build/rom.bin
 
 # Standard libraries
 

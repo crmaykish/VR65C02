@@ -1,4 +1,5 @@
 #include "6502_rom_bin.h"
+#include "memory_map.h"
 
 // CPU control pins
 #define RESB PIN_PE1
@@ -12,23 +13,10 @@
 #define A15 PIN_PE3
 #define VIA_PORT PORTC
 
-// Memory-mapped registers
-#define VIA_ADDR 0x4000
-#define UART_RX 0x5000
-#define UART_TX 0x5001
-#define UART_RX_RDY 0x5002
-
-// RAM is mapped from 0x0000 to RAM_SIZE-1
-#define RAM_SIZE 0x1000
-
-// ROM is mapped from ROM_START to 0xFFFF
-#define ROM_START 0xF000
-#define ROM_SIZE (0x10000 - ROM_START)
-
-// NOTE: ROM content is defined in the generted header file 6502_rom_bin.h
-
 // Byte array acts as system RAM for the 6502
 uint8_t RAM[RAM_SIZE] = {0};
+
+// NOTE: ROM content is defined in the generated header file 6502_rom_bin.h
 
 uint16_t addr = 0;
 uint8_t data = 0;
@@ -115,7 +103,7 @@ void loop() {
         } else if (addr == UART_TX) {
             // Write data bus to UART
             Serial1.write(data);
-        } else if (addr == VIA_ADDR) {
+        } else if (addr == VIA) {
             // Write data bus to "VIA"
             VIA_PORT.OUT = (data & 0xF);
         }

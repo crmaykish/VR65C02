@@ -11,7 +11,7 @@ It's like the 65C02 is wearing the ATmega as a VR headset!
 
 - Real 6502 code running on a real 6502
 - ATmega4809 microcontroller emulates everything else
-- 4K each of emulated ROM and RAM
+- 5KB of emulated RAM, up to 32KB emulated ROM
 - Memory-mapped serial port and GPIO register
 - 6502 is programmed by uploading an Arduino sketch
 - Eye-watering clock speed of 257kHz!
@@ -45,10 +45,9 @@ Similarly, there are four GPIO pins accessible as a memory-mapped register to th
 ### Memory Map
 
 The memory map of the 65C02 is as follows:
-1. 4k "RAM" at 0x0000
-2. GPIO register at 0x4000
-3. UART registers at 0x5000
-4. 4k "ROM" at 0xF000
+1. 5KB "RAM" at 0x0000
+2. I/O regisers at 0x7F00
+3. 4KB "ROM" at 0xF000
 
 The ATmega4809 has enough flash memory to support up to 32KB of ROM if necessary, but the total onboard SRAM is only 6KB.
 
