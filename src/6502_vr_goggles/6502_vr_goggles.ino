@@ -2,7 +2,7 @@
 
 // #define SERIAL_DEBUG
 
-#define CLK_DELAY 0
+#define CLK_DELAY_US 0
 
 #define RESB PIN_PE0
 #define CLK PIN_PE1
@@ -34,59 +34,37 @@ uint8_t special_count = 0;
 uint8_t serial_char = 0;
 
 void setup() {
-  // Setup buses as input
-  ADDR_LOW.DIR = 0;
-  ADDR_HIGH.DIR = 0;
-  DATA_BUS.DIR = 0;
-  pinMode(A15, INPUT);
+    // Setup buses as input
+    ADDR_LOW.DIR = 0;
+    ADDR_HIGH.DIR = 0;
+    DATA_BUS.DIR = 0;
+    pinMode(A15, INPUT);
 
-  // Setup CPU control pins
-  pinMode(RWB, INPUT);
-  pinMode(RESB, OUTPUT);
-  pinMode(CLK, OUTPUT);
+    // Setup CPU control pins
+    pinMode(RWB, INPUT);
+    pinMode(RESB, OUTPUT);
+    pinMode(CLK, OUTPUT);
 
-  digitalWriteFast(RESB, LOW);
-  digitalWriteFast(CLK, HIGH);
+    digitalWriteFast(RESB, LOW);
+    digitalWriteFast(CLK, HIGH);
 
-  // Setup "VIA" pins
-  VIA_PORT.DIRSET = 0b00111100;
-  VIA_PORT.OUT = 0b00000000;
+    // Setup "VIA" pins
+    VIA_PORT.DIRSET = 0b00111100;
+    VIA_PORT.OUT = 0b00000000;
 
-  Serial1.begin(115200);
+    Serial1.begin(115200);
 
-  delay(100);
+    delay(100);
 
 #ifdef SERIAL_DEBUG
-  Serial1.println("\r\nStart!");
+    Serial1.println("\r\nStart!");
 #endif
 
-  // Take 6502 out of reset
-  digitalWriteFast(RESB, HIGH);
+    // Take 6502 out of reset
+    digitalWriteFast(RESB, HIGH);
 }
 
 void loop() {
-
-  if (Serial1.available() > 0) {
-    serial_char = Serial1.read();
-    if (serial_char == '!') {
-      special_count++;
-
-      if (special_count == 3) {
-        // Enter programming mode
-        program_mode = true;
-      }
-    }
-    else {
-      special_count = 0;
-    }
-  }
-
-  if (program_mode) {
-    Serial1.println("Debug mode!");
-    while(1);
-    // TODO: Implement debugger, single-step function, etc.
-  }
-  else {
 #ifdef SERIAL_DEBUG
     Serial1.print(cycle);
     Serial1.print(" | ");
@@ -94,78 +72,70 @@ void loop() {
 
     // PHI goes LOW
     digitalWriteFast(CLK, LOW);
-    delay(CLK_DELAY);
+    delayMicroseconds(CLK_DELAY_US);
 
     rw = digitalReadFast(RWB);
     addr = (digitalReadFast(A15) << 15) | (ADDR_HIGH.IN << 8) | ADDR_LOW.IN;
 
     if (rw) {
-      // 6502 is reading from memory
-      DATA_BUS.DIR = 0xFF;
+        // 6502 is reading from memory
+        DATA_BUS.DIR = 0xFF;
 
-      if (addr >= (0x10000 - ROM_SIZE)) {
-        // Read from "ROM"
-        DATA_BUS.OUT = ROM[addr % ROM_SIZE];
-      }
-      else if (addr < RAM_SIZE) {
-        // Read from "RAM"
-        DATA_BUS.OUT = RAM[addr % RAM_SIZE];
-      }
-      else if (addr == UART_RX_RDY) {
-        DATA_BUS.OUT = (Serial1.available() > 0 || serial_char != 0) ? 0x01 : 0x00;
-      }
-      else if (addr == UART_RX) {
-        if (serial_char != 0) {
-          DATA_BUS.OUT = serial_char;
-          serial_char = 0;
+        if (addr >= (0x10000 - ROM_SIZE)) {
+            // Read from "ROM"
+            DATA_BUS.OUT = ROM[addr % ROM_SIZE];
+        } else if (addr < RAM_SIZE) {
+            // Read from "RAM"
+            DATA_BUS.OUT = RAM[addr % RAM_SIZE];
+        } else if (addr == UART_RX_RDY) {
+            DATA_BUS.OUT =
+                (Serial1.available() > 0 || serial_char != 0) ? 0x01 : 0x00;
+        } else if (addr == UART_RX) {
+            if (serial_char != 0) {
+                DATA_BUS.OUT = serial_char;
+                serial_char = 0;
+            } else {
+                DATA_BUS.OUT = Serial1.read();
+            }
         }
-        else {
-          DATA_BUS.OUT = Serial1.read();
-        }
-      }
-    }
-    else {
-      // 6502 is writing to memory
-      DATA_BUS.DIR = 0x00;
+    } else {
+        // 6502 is writing to memory
+        DATA_BUS.DIR = 0x00;
     }
 
     // PHI goes HIGH
     digitalWriteFast(CLK, HIGH);
-    delay(CLK_DELAY);
+    delayMicroseconds(CLK_DELAY_US);
 
     // Read the data bus
     data = DATA_BUS.IN;
 
     if (rw) {
-  #ifdef SERIAL_DEBUG
-      Serial1.print("R");
-  #endif
-    }
-    else {
-  #ifdef SERIAL_DEBUG
-      Serial1.print("W");
-  #endif
-      // Write data value to "RAM"
-      if (addr < RAM_SIZE) {
-        RAM[addr] = data;
-      }
-      else if (addr == VIA_ADDR) {
-        // Write byte to "VIA"
-        VIA_PORT.OUT = ((data & 0xF) << 2);
-      }
-      else if (addr == UART_TX) {
-        Serial1.write(data);
-      }
+#ifdef SERIAL_DEBUG
+        Serial1.print("R");
+#endif
+    } else {
+#ifdef SERIAL_DEBUG
+        Serial1.print("W");
+#endif
+        // Write data value to "RAM"
+        if (addr < RAM_SIZE) {
+            RAM[addr] = data;
+        } else if (addr == VIA_ADDR) {
+            // Write byte to "VIA"
+            VIA_PORT.OUT = ((data & 0xF) << 2);
+        } else if (addr == UART_TX) {
+            Serial1.write(data);
+        }
     }
 
-  #ifdef SERIAL_DEBUG
+#ifdef SERIAL_DEBUG
     Serial1.print(" | A: 0x");
     Serial1.print(addr, HEX);
     Serial1.print(" | D: 0x");
     Serial1.print(data, HEX);
     Serial1.println();
-  #endif
+#endif
 
     cycle++;
-  }
 }

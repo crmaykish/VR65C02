@@ -14,7 +14,7 @@ It's like the 65C02 is wearing the ATmega as a VR headset!
 - 4K each of emulated ROM and RAM
 - Memory-mapped serial port and GPIO register
 - 6502 is programmed by uploading an Arduino sketch
-- Eye-watering clock speed of 22kHz!
+- Eye-watering clock speed of 183kHz!
 
 ### Why?
 
@@ -34,9 +34,9 @@ Those would both likely be better choices, but to be totally honest, the availab
 
 VR65C02 is a fully functional computer system. The ATmega microcontroller provides emulated RAM and ROM as well as a passthrough UART and four GPIO pins that the 65C02 can access.
 
-The microcontroller controls the RESET and CLOCK lines of the CPU, so all memory access is handled synchronously by the Arduino code. For each bus cycle, the microcontroller reads the address bus and R/W pin from the CPU. If the CPU is reading a memory address, the microcontroller will decode the address into a memory value or an I/O operation and write the appripriate value out to the data bus. On a write cycle, the microcontroller reads the data bus value into its simulated RAM or updates the appropriate I/O system. The microcontroller implements address decoding in code in a similar way to a traditional system using logic gates or PLDs.
+The microcontroller controls the RESET and CLOCK lines of the CPU, so all memory access is handled synchronously by the Arduino code. For each bus cycle, the microcontroller reads the address bus and R/W pin from the CPU. If the CPU is reading a memory address, the microcontroller will decode the address into a memory value or an I/O operation and write the appropriate value out to the data bus. On a write cycle, the microcontroller reads the data bus value into its simulated RAM or updates the appropriate I/O system. The microcontroller implements address decoding in code in a similar way to a traditional system using logic gates or PLDs.
 
-Both RAM and ROM and backed by large byte arrays in the microcontroller's memory, the RAM using onboard SRAM and the ROM using onboard Flash.
+Both RAM and ROM are backed by large byte arrays in the microcontroller's memory, the RAM using onboard SRAM and the ROM using onboard Flash.
 
 The UART is a memory-mapped I/O device from the perspective of the 65C02, similar to a 6551 ACIA. The CPU can read and write bytes and the microcontroller passes them through to one of its native serial ports.
 
@@ -72,7 +72,7 @@ The ATmega4809 is programmed via UPDI, specifically, I am using a standard FTDI 
 
 All of the limitations of this system come down to hitting the limits of the ATmega4809 itself in one way or another.
 
-The main drawback is obviously clock speed. Simulating the whole bus cycle and all of the potential memory and I/O operations of the 6502 on a 20 MHz 8-bit microcontroller is not exactly quick. Measuring the PHI2 output on the CPU with an oscilloscope shows that the effective clock speed is about 22 kHz. Even at this speed, VR65C02 is surprisingly usable for simple GPIO tasks or interacting over the serial port, but it's about 45x slower than a Commodore 64 or Apple II. There are undoubtedly optimizations to make in the Arduino code that could speed this up considerably, but even with perfect AVR assembly, I doubt this system could ever run in the MHz range.
+The main drawback is obviously clock speed. Simulating the whole bus cycle and all of the potential memory and I/O operations of the 6502 on a 20 MHz 8-bit microcontroller is not exactly quick. Measuring the PHI2 output on the CPU with an oscilloscope shows that the effective clock speed is about 183 kHz. Even at this speed, VR65C02 is surprisingly usable for simple GPIO tasks or interacting over the serial port, but it's about 45x slower than a Commodore 64 or Apple II. There are undoubtedly optimizations to make in the Arduino code that could speed this up considerably, but even with perfect AVR assembly, I doubt this system could ever run in the MHz range.
 
 Besides the slow speed, the other main limitations is the lack of available pins on the ATmega. All 31 available IO pins are being used to connect to the 65C02 bus and control signals. Two of the pins are used for the serial port and four are set up as GPIO. The GPIO pins could be used for other things, but there's not a huge number to spare.
 

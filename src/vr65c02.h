@@ -5,4 +5,6 @@
 #define UART_TX     0x5001
 #define UART_RX_RDY 0x5002
 
+char uart_getc();
+
 #endif
