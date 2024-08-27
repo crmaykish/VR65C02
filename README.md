@@ -3,7 +3,7 @@ A 65C02 computer system with an ATmega4809 simulating all of the memory and I/O.
 
 It's like the 65C02 is wearing the ATmega as a VR headset!
 
-![Prototype](media/prototype.jpg)
+![Prototype](media/prototype2.jpg)
 
 ## Background
 
