@@ -4,8 +4,8 @@
 
 #define CLK_DELAY_US 0
 
-#define RESB PIN_PE0
-#define CLK PIN_PE1
+#define RESB PIN_PE1
+#define CLK PIN_PE0
 #define RWB PIN_PE2
 
 #define DATA_BUS VPORTA
