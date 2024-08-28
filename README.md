@@ -47,9 +47,9 @@ Similarly, there are four GPIO pins accessible as a memory-mapped register to th
 The memory map of the 65C02 is as follows:
 1. 5KB "RAM" at 0x0000
 2. I/O regisers at 0x7F00
-3. 4KB "ROM" at 0xF000
+3. 8KB "ROM" at 0xE000
 
-The ATmega4809 has enough flash memory to support up to 32KB of ROM if necessary, but the total onboard SRAM is only 6KB.
+The ATmega4809 has enough flash memory to support up to 32KB of ROM if necessary, but the total onboard SRAM is only 6KB and some is set aside for the Arduino code.
 
 ## Software
 

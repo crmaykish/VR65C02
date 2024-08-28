@@ -5,7 +5,7 @@
 #define RAM_SIZE 0x1400
 
 // ROM is mapped from ROM_START to 0xFFFF
-#define ROM_START 0xF000
+#define ROM_START 0xE000
 #define ROM_SIZE (0x10000 - ROM_START)
 
 // I/O Registers

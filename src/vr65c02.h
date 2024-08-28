@@ -3,6 +3,7 @@
 
 #include "6502_vr_goggles/memory_map.h"
 
-char uart_getc();
+char serial_getc();
+void serial_putc(char c);
 
 #endif
