@@ -32,6 +32,7 @@ void handler_info();
 void handler_peek();
 void handler_poke();
 void handler_dump();
+void handler_demo();
 void command_not_found(char *command_name);
 
 // CPU type names
@@ -44,6 +45,7 @@ static const command_t commands[] = {
     {"peek", "addr", "", "Peek at a memory address", handler_peek},
     {"poke", "addr", "val", "Poke a value into memory", handler_poke},
     {"dump", "addr", "", "Dump memory in hex and ASCII", handler_dump},
+    {"demo", "", "", "Run a hardware demo", handler_demo},
 };
 
 static const uint8_t COMMAND_COUNT = sizeof(commands) / sizeof(command_t);
@@ -151,6 +153,31 @@ void handler_dump() {
     uint16_t addr = strtol(param1, 0, 16);
 
     memdump(addr, MEMDUMP_BYTES);
+}
+
+void handler_demo() {
+    char rx = 0;
+    unsigned char io = 0;
+
+    // Set all GPIO pins to output
+    POKE(VIA_DIR, 0xF);
+
+    while (1) {
+        // Watch for escape key press
+        if (PEEK(UART_RX_RDY) == 1) {
+            rx = PEEK(UART_RX);
+
+            if (rx == 0x1B) {
+                printf("Stopping demo.");
+                POKE(VIA_DIR, 0);
+                return;
+            }
+        }
+
+        printf("GPIO: %01X\r\n", io);
+        POKE(VIA, io);
+        io++;
+    }
 }
 
 void print_string_bin(char *str, uint8_t max) {
