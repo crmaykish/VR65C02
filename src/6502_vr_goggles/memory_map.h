@@ -10,6 +10,7 @@
 
 // I/O Registers
 #define VIA 0x7F00
+#define VIA_DIR 0x7F01
 #define UART_RX 0x7F10
 #define UART_TX 0x7F11
 #define UART_RX_RDY 0x7F12

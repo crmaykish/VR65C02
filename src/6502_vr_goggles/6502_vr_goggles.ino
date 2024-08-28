@@ -37,8 +37,7 @@ void setup() {
     digitalWriteFast(CLK, HIGH);
 
     // Setup "VIA" pins
-    VIA_PORT.DIRSET = 0b00001111;
-    VIA_PORT.OUT = 0b00000000;
+    VIA_PORT.DIRCLR = 0b00001111;
 
     Serial1.swap(1);
     Serial1.begin(115200);
@@ -81,7 +80,14 @@ void loop() {
             // Read from UART RX ready register
             DATA_BUS.OUT = (Serial1.available() > 0) ? 0x01 : 0x00;
         } else if (addr == UART_RX) {
+            // Read from serial port
             DATA_BUS.OUT = Serial1.read();
+        } else if (addr == VIA) {
+            // Read from VIA GPIO
+            DATA_BUS.OUT = VIA_PORT.IN & 0xF;
+        } else if (addr == VIA_DIR) {
+            // Read from VIA direction register
+            DATA_BUS.OUT = VIA_PORT.DIR & 0xF;
         }
     } else {
         // 6502 is writing to memory
@@ -106,6 +112,10 @@ void loop() {
         } else if (addr == VIA) {
             // Write data bus to "VIA"
             VIA_PORT.OUT = (data & 0xF);
+        } else if (addr == VIA_DIR) {
+            // Write to VIA GPIO direction register
+            VIA_PORT.DIRCLR = 0xF;
+            VIA_PORT.DIRSET = data & 0xF;
         }
     }
 }
