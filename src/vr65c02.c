@@ -2,12 +2,9 @@
 #include <peekpoke.h>
 
 #pragma warn(unused-param, push, off)
-// write() must be defined for printf() to work
-int write(int fd, const char *buf, unsigned count)
-{
+int write(int fd, const char *buf, unsigned count) {
     int i = 0;
-    for (i; i < count; i++)
-    {
+    for (i; i < count; i++) {
         POKE(UART_TX, buf[i]);
     }
 
@@ -15,8 +12,10 @@ int write(int fd, const char *buf, unsigned count)
 }
 #pragma warn(unused-param, pop)
 
-char uart_getc() {
+char serial_getc() {
     while (PEEK(UART_RX_RDY) == 0) {
     }
-    return PEEK(UART_RX); 
+    return PEEK(UART_RX);
 }
+
+void serial_putc(char c) { POKE(UART_TX, c); }

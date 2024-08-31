@@ -2,38 +2,33 @@ CC = cl65
 CA = ca65
 AR = ar65
 
-CFLAGS = -O -t none --cpu 65c02 --static-locals -I include
+CFLAGS = -O -t none --cpu 65c02 --static-locals
 
 ROM_CFG = mem.cfg
 
 ROM_LIB = rom.lib
 
-HELLO_SRC = hello.c vr65c02.c
+MONITOR_SRC = monitor.c vr65c02.c
 
 .PHONY: all clean
 
-all: hello
+all: monitor
 
-# Firmware applications
-
-# Hello World
-hello: $(HELLO_SRC) | build_dir rom_lib
-	$(CC) $(CFLAGS) -C $(ROM_CFG) $(HELLO_SRC) $(ROM_LIB) -o build/hello.bin
+# ROM monitor application
+monitor: $(MONITOR_SRC) | build_dir rom_lib
+	$(CC) $(CFLAGS) -C $(ROM_CFG) $(MONITOR_SRC) $(ROM_LIB) -o build/rom.bin
 
 # Standard libraries
-
 # TODO: don't really need to build the libs every time we build firmware
 # Only rebuild when the crt0 files change
-
 rom_lib:
 	cp /usr/share/cc65/lib/supervision.lib rom.lib
 	$(CA) -t none --cpu 65c02 -o crt0.o crt0.asm
 	$(AR) a rom.lib crt0.o
 
-# Cleanup
-
 build_dir:
 	@mkdir -p build
 
+# Cleanup
 clean:
-	@$(RM) -rf build src/*.o config/*.lib config/*.o build/*.map build/*.list
+	@$(RM) -rf build *.o *.lib 6502_vr_goggles/6502_rom_bin.h
