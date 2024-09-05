@@ -205,7 +205,7 @@
 					)
 				)
 			)
-			(pin bidirectional line
+			(pin power_in line
 				(at -10.16 -15.24 0)
 				(length 2.54)
 				(name "AVCC"
@@ -223,7 +223,7 @@
 					)
 				)
 			)
-			(pin bidirectional line
+			(pin power_in line
 				(at -10.16 -17.78 0)
 				(length 2.54)
 				(name "GND"
@@ -493,7 +493,7 @@
 					)
 				)
 			)
-			(pin bidirectional line
+			(pin power_in line
 				(at 10.16 2.54 180)
 				(length 2.54)
 				(name "VCC"
@@ -511,7 +511,7 @@
 					)
 				)
 			)
-			(pin bidirectional line
+			(pin power_in line
 				(at 10.16 5.08 180)
 				(length 2.54)
 				(name "GND"
@@ -691,7 +691,7 @@
 					)
 				)
 			)
-			(pin bidirectional line
+			(pin power_in line
 				(at -10.16 15.24 0)
 				(length 2.54)
 				(name "VCC"
@@ -709,7 +709,7 @@
 					)
 				)
 			)
-			(pin bidirectional line
+			(pin power_in line
 				(at -10.16 12.7 0)
 				(length 2.54)
 				(name "GND"
