@@ -2826,6 +2826,151 @@
 				)
 			)
 		)
+		(symbol "Switch:SW_Push"
+			(pin_numbers hide)
+			(pin_names
+				(offset 1.016) hide)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "SW"
+				(at 1.27 2.54 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify left)
+				)
+			)
+			(property "Value" "SW_Push"
+				(at 0 -1.524 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at 0 5.08 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Datasheet" "~"
+				(at 0 5.08 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Description" "Push button switch, generic, two pins"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_keywords" "switch normally-open pushbutton push-button"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "SW_Push_0_1"
+				(circle
+					(center -2.032 0)
+					(radius 0.508)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 0 1.27) (xy 0 3.048)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 2.54 1.27) (xy -2.54 1.27)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(circle
+					(center 2.032 0)
+					(radius 0.508)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(pin passive line
+					(at -5.08 0 0)
+					(length 2.54)
+					(name "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 5.08 0 180)
+					(length 2.54)
+					(name "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+		)
 		(symbol "W65Cxx:W65C02"
 			(exclude_from_sim no)
 			(in_bom yes)
@@ -3939,6 +4084,12 @@
 		(uuid "3fc13ca4-8932-4000-9308-156f89bd9090")
 	)
 	(junction
+		(at 35.56 105.41)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "45f90c4b-fa1e-4fd9-ad8a-5b9e259eb8bd")
+	)
+	(junction
 		(at 212.09 142.24)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -4802,6 +4953,16 @@
 	)
 	(wire
 		(pts
+			(xy 40.64 105.41) (xy 35.56 105.41)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "c8de4982-8d68-4dfc-9b90-b02e66c2b2e7")
+	)
+	(wire
+		(pts
 			(xy 66.04 33.02) (xy 60.96 33.02)
 		)
 		(stroke
@@ -5019,6 +5180,16 @@
 			(type default)
 		)
 		(uuid "fbde110a-6626-4a91-914a-440e6c0b6d89")
+	)
+	(text "TODO: connect the reset switch to one of the GPIO pins"
+		(exclude_from_sim no)
+		(at 39.624 116.84 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+		(uuid "aa97b113-dd43-42f8-83f6-24e8fe2de688")
 	)
 	(text "TODO: double check this pinout"
 		(exclude_from_sim no)
@@ -5348,6 +5519,17 @@
 			(justify left bottom)
 		)
 		(uuid "4b4a1958-d817-41d6-aca3-a2a1ad252df0")
+	)
+	(label "SOFT_RES"
+		(at 40.64 105.41 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "4ecfd443-2c35-4ea6-8431-fc1520014a42")
 	)
 	(label "ML"
 		(at 106.68 52.07 0)
@@ -6653,6 +6835,73 @@
 		)
 	)
 	(symbol
+		(lib_id "Device:R")
+		(at 35.56 101.6 180)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "1cba2f07-7001-4765-ad6e-c0bd9c7ff440")
+		(property "Reference" "R7"
+			(at 37.846 101.346 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "10k"
+			(at 35.56 101.346 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P7.62mm_Horizontal"
+			(at 37.338 101.6 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 35.56 101.6 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Resistor"
+			(at 35.56 101.6 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "2"
+			(uuid "e57a3149-afdc-4d42-869e-e6c7810b9833")
+		)
+		(pin "1"
+			(uuid "9125b597-2365-401d-b09d-00324f4f6612")
+		)
+		(instances
+			(project "vr65c02-v1"
+				(path "/dcb2d476-46e5-41af-af10-59256d95f5a7"
+					(reference "R7")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "power:GND")
 		(at 152.4 106.68 0)
 		(unit 1)
@@ -6713,6 +6962,74 @@
 			(project ""
 				(path "/dcb2d476-46e5-41af-af10-59256d95f5a7"
 					(reference "#PWR01")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Switch:SW_Push")
+		(at 30.48 105.41 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "2830a053-74d9-4a29-bd8d-7ce50d789903")
+		(property "Reference" "SW1"
+			(at 30.226 100.33 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "SW_Push"
+			(at 30.48 99.822 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Footprint" "Button_Switch_THT:SW_PUSH_6mm_H5mm"
+			(at 6.35 102.87 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 30.48 100.33 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Push button switch, generic, two pins"
+			(at 30.48 105.41 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "e1ae88e3-05cc-494e-9cde-411f76920411")
+		)
+		(pin "2"
+			(uuid "9f5a7adb-cae9-4fe5-ac96-b5e66b99235f")
+		)
+		(instances
+			(project "vr65c02-v1"
+				(path "/dcb2d476-46e5-41af-af10-59256d95f5a7"
+					(reference "SW1")
 					(unit 1)
 				)
 			)
@@ -8440,6 +8757,72 @@
 		)
 	)
 	(symbol
+		(lib_id "power:GND")
+		(at 25.4 105.41 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "a7608a1b-0a58-4038-b87a-97a1c086460c")
+		(property "Reference" "#PWR026"
+			(at 25.4 111.76 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 25.4 110.49 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 25.4 105.41 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 25.4 105.41 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
+			(at 25.4 105.41 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "e21b8c56-8116-4667-839b-1770c51f3eae")
+		)
+		(instances
+			(project ""
+				(path "/dcb2d476-46e5-41af-af10-59256d95f5a7"
+					(reference "#PWR026")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "Device:R")
 		(at 128.27 82.55 180)
 		(unit 1)
@@ -9901,6 +10284,72 @@
 			(project ""
 				(path "/dcb2d476-46e5-41af-af10-59256d95f5a7"
 					(reference "U1")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:+5V")
+		(at 35.56 97.79 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "f73ab130-7fe3-405a-82c6-7e825b16cc0e")
+		(property "Reference" "#PWR025"
+			(at 35.56 101.6 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "+5V"
+			(at 35.56 92.71 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 35.56 97.79 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 35.56 97.79 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"+5V\""
+			(at 35.56 97.79 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "9f4b975f-67a5-4088-ac6a-070d654419c3")
+		)
+		(instances
+			(project ""
+				(path "/dcb2d476-46e5-41af-af10-59256d95f5a7"
+					(reference "#PWR025")
 					(unit 1)
 				)
 			)

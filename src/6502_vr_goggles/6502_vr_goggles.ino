@@ -1,6 +1,11 @@
 #include "6502_rom_bin.h"
 #include "memory_map.h"
 
+// MCU pins
+#ifdef SOFT_RESET
+#define SOFT_RES_SW PIN_PC3
+#endif
+
 // CPU control pins
 #define RESB PIN_PE1
 #define CLK PIN_PE0
@@ -22,6 +27,21 @@ uint16_t addr = 0;
 uint8_t data = 0;
 bool rw = 0;
 
+void reset_6502() {
+    digitalWriteFast(RESB, LOW);
+
+    // Toggle the clock a few times with the reset pin LOW
+    for (int i = 0; i < 100; i++) {
+        digitalWriteFast(CLK, LOW);
+        delay(5);
+        digitalWriteFast(CLK, HIGH);
+        delay(5);
+    }
+
+    // Take 6502 out of reset
+    digitalWriteFast(RESB, HIGH);
+}
+
 void setup() {
     // Setup buses as input
     ADDR_LOW.DIR = 0;
@@ -39,22 +59,35 @@ void setup() {
     // Setup "VIA" pins
     VIA_PORT.DIRCLR = 0b00001111;
 
+#ifdef SOFT_RESET
+    pinMode(SOFT_RES_SW, INPUT);
+#endif
+
     Serial1.swap(1);
     Serial1.begin(115200);
 
-    // Toggle the clock a few times with the reset pin LOW
-    for (int i = 0; i < 10; i++) {
-        digitalWriteFast(CLK, LOW);
-        delay(5);
-        digitalWriteFast(CLK, HIGH);
-        delay(5);
-    }
-
-    // Take 6502 out of reset
-    digitalWriteFast(RESB, HIGH);
+    reset_6502();
 }
 
 void loop() {
+#ifdef SOFT_RESET
+
+    // TODO: read and restore pinMode before checking switch?
+    // if pinMode == IN and val = 0?
+    // Might still conflict with GPIO
+    // Use the MISO pin instead?
+    // Maybe we can interleave the reset checks with the actual pin function since the clock is
+    // totally controlled by this loop
+    // If not, maybe just make the option SPI or RST, not both, reset + I2C is probably good enough
+
+
+    // TODO: an interrupt might make way more sense here instead of polling constantly
+
+    if (!digitalReadFast(SOFT_RES_SW)) {
+        reset_6502();
+    }
+#endif
+
     // PHI goes LOW
     digitalWriteFast(CLK, LOW);
 

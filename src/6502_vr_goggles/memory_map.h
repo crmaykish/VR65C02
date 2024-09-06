@@ -1,6 +1,8 @@
 #ifndef CONFIG_H_
 #define CONFIG_H_
 
+#define SOFT_RESET
+
 // RAM is mapped from 0x0000 to RAM_SIZE-1
 #define RAM_SIZE 0x1400
 
