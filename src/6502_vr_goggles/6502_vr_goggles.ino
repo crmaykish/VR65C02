@@ -148,13 +148,16 @@ void loop() {
         } else if (addr == VIA_DIR) {
             // Write to VIA GPIO direction register
 #ifdef SOFT_RESET
+            // If soft reset switch is active, ignore the lowest bit
             VIA_PORT.DIRCLR = 0b00001110;
             VIA_PORT.DIRSET = data & 0b00001110;
 #else
+            // Otherwise, use the lowest four bits of the port as GPIO
             VIA_PORT.DIRCLR = 0xF;
             VIA_PORT.DIRSET = data & 0xF;
 #endif
         } else if (addr == I2C_CTRL) {
+            // Turn on or off the I2C function of the GPIO pins
             if (data & 0b01) {
                 Wire.swap(1);
                 Wire.begin();
@@ -162,8 +165,10 @@ void loop() {
                 Wire.end();
             }
         } else if (addr == I2C_ADDR) {
+            // Set I2C device address
             i2c_dev = data;
         } else if (addr == I2C_DATA) {
+            // Write a byte to active I2C device
             Wire.beginTransmission(i2c_dev);
             Wire.write(data);
             Wire.endTransmission();

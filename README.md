@@ -13,9 +13,8 @@ It's like the 6502 is wearing the ATmega as a VR headset! (AVR headset?)
 - ATmega4809 microcontroller emulates everything else
 - 6502 is programmed by uploading an Arduino sketch
 - 5KB of emulated RAM, up to 32KB emulated ROM
-- Memory-mapped serial port
-- 4x memory-mapped GPIO pins
-- Eye-watering clock speed of 257kHz!
+- Memory-mapped UART, GPIO, and I2C peripherals for the 6502
+- Eye-watering clock speed of ~250 kHz!
 
 ### Why?
 
@@ -31,7 +30,7 @@ Those would both likely be better choices, but to be totally honest, the availab
 
 ![VR65C02 Block Diagram](media/block_diagram.png)
 
-### Memory and I/O Emulation
+### Memory Emulation
 
 VR65C02 is a fully functional computer system. The ATmega microcontroller provides emulated RAM and ROM as well as a passthrough UART and four GPIO pins that the 6502 can access.
 
@@ -39,9 +38,19 @@ The microcontroller controls the RESET and CLOCK lines of the CPU, so all memory
 
 Both RAM and ROM are backed by large byte arrays in the microcontroller's memory, the RAM using onboard SRAM and the ROM using onboard Flash.
 
+### I/O Emulation
+
 The UART is a memory-mapped I/O device from the perspective of the 6502, similar to a 6551 ACIA. The CPU can read and write bytes and the microcontroller passes them through to one of its native serial ports.
 
 Similarly, there are four GPIO pins accessible as a memory-mapped register to the 6502.
+
+These GPIO ports have two alternate functions. If SOFT_RESET is defined in [memory_map.h](src/6502_vr_goggles/memory_map.h), then GPIO pin 0 will function as a reset pin for the 6502. It does not reset the Arduino, but it triggers the Arduino to reset the 6502. If soft reset is enabled, pin 0 cannot be used as a normal GPIO pin.
+
+I2C devices can also be attached to the GPIO pins. GPIO 2 and 3 double as SDA and SCL respectively. The Arduino provides low level access to the I2C bus through a few memory-mapped registers. The 6502 can enable/disable the I2C bus, set the active peripheral address, and read/write data through these registers.
+
+See [memory_map.h](src/6502_vr_goggles/memory_map.h) for more details.
+
+It should also be possible to implement SPI passthrough in a similar fashion, but I2C is really a better fit for this system, especially considering its slow clock speed and lack of I/O lines. With I2C, a ton of peripherals can be daisy-chained and there is still room for 1 or 2 GPIO pins. I've tested reading a real-time clock module over I2C from the 6502 code (see the `time` command in [monitor.c](src/monitor.c)).
 
 ### Memory Map
 
@@ -58,7 +67,20 @@ The core of VR65C02 is the Arduino sketch running on the ATmega4809. As describe
 
 Real 6502 machine code is running on the CPU. This can be assembly or C code compiled with cc65. Since there is no physical ROM or RAM, the code has to live somewhere. My approach is to use the large amount of onboard Flash memory of the ATmega to store this. The main trick of VR65C02 is taking this compiled binary and getting it into the microcontroller Flash as part of the Arduino sketch upload.
 
-The build process is done in a single script (build.sh). The process looks like this:
+### Setup
+
+To build and deploy code to the VR65C02, you'll need to setup the following:
+1. Install Arduino to `/opt/local`
+2. Install MegaCoreX Arduino package
+3. Install cc65 or some other 6502 compiler/assembler
+4. Install make (`build-essential` on Debian/Ubuntu)
+5. Install Python 3.x
+
+Note: you may need to update the build.sh script if you're on a different platform. Windows will probably require a different approach.
+
+### Building
+
+The build process is done in a single script, [build.sh](src/build.sh). The process looks like this:
 1. Compile 6502 C code into a binary ROM file.
 2. Run a Python script to convert this binary file into a C header file with a large const array of bytes.
 3. Compile the Arduino sketch with this generated header file.
@@ -66,7 +88,11 @@ The build process is done in a single script (build.sh). The process looks like 
 
 ### Programming the ATmega (and by extension the 6502)
 
-The ATmega4809 is programmed via UPDI, specifically, I am using a standard FTDI USB-serial adapter (with a 4.7k resister between Rx and Tx) and the SerialUPDI programmer in the [MegaCoreX](https://github.com/MCUdude/MegaCoreX) Arduino board package. Since the 6502 code is uploaded as part of the Arduino sketch, it's almost like programming a 6502 as an Arduino.
+Programming the ATmega4809 is done via UPDI. UPDI is a one-wire programming interface that can be implemented over a simple serial port. On VR65C02, the wiring is already done on the board, so a standard FTDI-style USB-UART can be plugged into the onboard UPDI header. In the Arduino IDE, the SerialUPDI programmer included in MegaCoreX at 230400 baud will work just fine. Make sure to set the serial port to the UPDI USB device and not the one plugged into the UART port.
+
+Note: the board and programmer selection is already done in the [build.sh](src/build.sh) script using the `arduino-cli` command.
+
+It's possible to use a single FTDI device and switch between the headers on board for programming versus serial monitoring, but having two different serial ports is a lot for convenient.
 
 ## Limitations
 
