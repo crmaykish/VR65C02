@@ -1,9 +1,10 @@
 #include "6502_rom_bin.h"
 #include "memory_map.h"
+#include <Wire.h>
 
 // MCU pins
 #ifdef SOFT_RESET
-#define SOFT_RES_SW PIN_PC3
+#define SOFT_RES_SW PIN_PC0
 #endif
 
 // CPU control pins
@@ -27,15 +28,17 @@ uint16_t addr = 0;
 uint8_t data = 0;
 bool rw = 0;
 
+uint8_t i2c_dev = 0;
+
 void reset_6502() {
     digitalWriteFast(RESB, LOW);
 
     // Toggle the clock a few times with the reset pin LOW
-    for (int i = 0; i < 100; i++) {
+    for (int i = 0; i < 50; i++) {
         digitalWriteFast(CLK, LOW);
-        delay(5);
+        delay(2);
         digitalWriteFast(CLK, HIGH);
-        delay(5);
+        delay(2);
     }
 
     // Take 6502 out of reset
@@ -71,18 +74,6 @@ void setup() {
 
 void loop() {
 #ifdef SOFT_RESET
-
-    // TODO: read and restore pinMode before checking switch?
-    // if pinMode == IN and val = 0?
-    // Might still conflict with GPIO
-    // Use the MISO pin instead?
-    // Maybe we can interleave the reset checks with the actual pin function since the clock is
-    // totally controlled by this loop
-    // If not, maybe just make the option SPI or RST, not both, reset + I2C is probably good enough
-
-
-    // TODO: an interrupt might make way more sense here instead of polling constantly
-
     if (!digitalReadFast(SOFT_RES_SW)) {
         reset_6502();
     }
@@ -121,6 +112,15 @@ void loop() {
         } else if (addr == VIA_DIR) {
             // Read from VIA direction register
             DATA_BUS.OUT = VIA_PORT.DIR & 0xF;
+        } else if (addr == I2C_DATA) {
+            Wire.requestFrom(i2c_dev, 1);
+            if (Wire.available()) {
+                DATA_BUS.OUT = Wire.read();
+            } else {
+                DATA_BUS.OUT = 0;
+            }
+        } else if (addr == I2C_ADDR) {
+            DATA_BUS.OUT = i2c_dev;
         }
     } else {
         // 6502 is writing to memory
@@ -147,8 +147,26 @@ void loop() {
             VIA_PORT.OUT = (data & 0xF);
         } else if (addr == VIA_DIR) {
             // Write to VIA GPIO direction register
+#ifdef SOFT_RESET
+            VIA_PORT.DIRCLR = 0b00001110;
+            VIA_PORT.DIRSET = data & 0b00001110;
+#else
             VIA_PORT.DIRCLR = 0xF;
             VIA_PORT.DIRSET = data & 0xF;
+#endif
+        } else if (addr == I2C_CTRL) {
+            if (data & 0b01) {
+                Wire.swap(1);
+                Wire.begin();
+            } else {
+                Wire.end();
+            }
+        } else if (addr == I2C_ADDR) {
+            i2c_dev = data;
+        } else if (addr == I2C_DATA) {
+            Wire.beginTransmission(i2c_dev);
+            Wire.write(data);
+            Wire.endTransmission();
         }
     }
 }

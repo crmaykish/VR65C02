@@ -33,6 +33,7 @@ void handler_peek();
 void handler_poke();
 void handler_dump();
 void handler_demo();
+void handler_time();
 void command_not_found(char *command_name);
 
 // CPU type names
@@ -46,6 +47,7 @@ static const command_t commands[] = {
     {"poke", "addr", "val", "Poke a value into memory", handler_poke},
     {"dump", "addr", "", "Dump memory in hex and ASCII", handler_dump},
     {"demo", "", "", "Run a hardware demo", handler_demo},
+    {"time", "", "", "Display the current time", handler_time},
 };
 
 static const uint8_t COMMAND_COUNT = sizeof(commands) / sizeof(command_t);
@@ -178,6 +180,40 @@ void handler_demo() {
         POKE(VIA, io);
         io++;
     }
+}
+
+uint8_t bcd2bin(uint8_t val) { return val - 6 * (val >> 4); }
+
+void handler_time() {
+    uint8_t b[7] = {0};
+    int i = 0;
+    uint8_t ack = 0;
+
+    printf("Reading time...\r\n");
+
+    // Init I2C
+    POKE(I2C_CTRL, 1);
+
+    // Set I2C device address
+    POKE(I2C_ADDR, 0x68); // RTC address is 0x68
+
+    // Send "now" command
+    POKE(I2C_DATA, 0);
+
+    // Read ack
+    ack = PEEK(I2C_DATA);
+
+    // Read 7 bytes of datetime from the RTC
+    b[0] = bcd2bin(PEEK(I2C_DATA));
+    b[1] = bcd2bin(PEEK(I2C_DATA));
+    b[2] = bcd2bin(PEEK(I2C_DATA));
+    b[3] = bcd2bin(PEEK(I2C_DATA));
+    b[4] = bcd2bin(PEEK(I2C_DATA));
+    b[5] = bcd2bin(PEEK(I2C_DATA) & 0x7F);
+    b[6] = bcd2bin(PEEK(I2C_DATA));
+
+    printf("%04d-%02d-%02d %02d:%02d:%02d\r\n", b[6] + 2000, b[5], b[4], b[2],
+           b[1], b[0]);
 }
 
 void print_string_bin(char *str, uint8_t max) {
