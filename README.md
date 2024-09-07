@@ -92,7 +92,7 @@ Programming the ATmega4809 is done via UPDI. UPDI is a one-wire programming inte
 
 Note: the board and programmer selection is already done in the [build.sh](src/build.sh) script using the `arduino-cli` command.
 
-It's possible to use a single FTDI device and switch between the headers on board for programming versus serial monitoring, but having two different serial ports is a lot for convenient.
+It's possible to use a single FTDI device and switch between the headers on board for programming versus serial monitoring, but having two different serial ports is a lot more convenient.
 
 ## Limitations
 
