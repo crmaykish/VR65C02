@@ -3,7 +3,7 @@ A 6502 computer system with an ATmega4809 simulating all of the memory and I/O. 
 
 It's like the 6502 is wearing the ATmega as a VR headset! (AVR headset?)
 
-![Prototype](media/render1.png)
+![Prototype](media/i2c_rtc.jpg)
 
 ## Background
 
